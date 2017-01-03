@@ -1,4 +1,4 @@
-/*!*****************************************************************
+/*******************************************************************
  *
  * StoryPlaces
  *
@@ -18,7 +18,7 @@
  * Redistributions in binary form must reproduce the above copyright
  notice, this list of conditions and the following disclaimer in the
  documentation and/or other materials provided with the distribution.
- * The name of the Universities of Southampton nor the name of its
+ * The name of the University of Southampton nor the name of its
  contributors may be used to endorse or promote products derived from
  this software without specific prior written permission.
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -32,15 +32,61 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+import {JSONable} from "../interfaces/JSONable";
+import {FromObjectInterface} from "../interfaces/FromObjectInterface";
+import {TypeChecker} from "../utilities/TypeChecker";
+import {inject} from "aurelia-framework";
 
-export class PagesMapViewSettings {
-    private map: boolean;
-    private pageDistance: any;
-    private pageArrows: any;
+@inject(TypeChecker)
+export class PagesMapViewSettings implements JSONable, FromObjectInterface {
 
-    constructor({map = false, pageArrows = false, pageDistance = false} = {}) {
-        this.map = map;
-        this.pageArrows = pageArrows;
-        this.pageDistance = pageDistance;
+    private _map: boolean;
+    private _pageDistance: boolean;
+    private _pageArrows: boolean;
+
+    constructor(private typeChecker: TypeChecker, data?: any) {
+        this.fromObject(data);
+    }
+
+    public fromObject(data: any = {map: undefined, pageArrows: undefined, pageDistance: undefined}) {
+        this.typeChecker.validateAsObjectAndNotArray("Data", data);
+        this.map = data.map;
+        this.pageArrows = data.pageArrows;
+        this.pageDistance = data.pageDistance;
+    }
+
+    public toJSON() {
+        return {
+            map: this.map,
+            pageArrows: this.pageArrows,
+            pageDistance: this.pageDistance
+        };
+    }
+
+    get map(): boolean {
+        return this._map;
+    }
+
+    set map(value: boolean) {
+        this.typeChecker.validateAsBooleanOrUndefined("Map", value);
+        this._map = value;
+    }
+
+    get pageDistance(): boolean {
+        return this._pageDistance;
+    }
+
+    set pageDistance(value: boolean) {
+        this.typeChecker.validateAsBooleanOrUndefined("PageDistance", value);
+        this._pageDistance = value;
+    }
+
+    get pageArrows(): boolean {
+        return this._pageArrows;
+    }
+
+    set pageArrows(value: boolean) {
+        this.typeChecker.validateAsBooleanOrUndefined("PageArrows", value);
+        this._pageArrows = value;
     }
 }

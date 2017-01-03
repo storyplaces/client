@@ -1,4 +1,4 @@
-/*!*****************************************************************
+/*******************************************************************
  *
  * StoryPlaces
  *
@@ -18,7 +18,7 @@
  * Redistributions in binary form must reproduce the above copyright
  notice, this list of conditions and the following disclaimer in the
  documentation and/or other materials provided with the distribution.
- * The name of the Universities of Southampton nor the name of its
+ * The name of the University of Southampton nor the name of its
  contributors may be used to endorse or promote products derived from
  this software without specific prior written permission.
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -32,18 +32,26 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+import {BaseModel} from "./BaseModel";
+import {TypeChecker} from "../utilities/TypeChecker";
+import {inject} from "aurelia-framework";
 
-import {Identifiable} from "../interfaces/Identifiable";
+@inject(TypeChecker)
+export class Page extends BaseModel{
 
-export class Page implements Identifiable {
-    id: string;
-    name: string;
-    conditions: Array<Object>;
+    private _name: string;
+    private _conditions: Array<Object>;
 
-    constructor({id = '', name = '', conditions = []} = {}) {
-        this.id = id;
-        this.name = name;
-        this.conditions = conditions;
+    constructor(typeChecker: TypeChecker, data?: any) {
+        super(typeChecker);
+        this.fromObject(data);
+    }
+
+    public fromObject(data: any = {id:undefined, name: undefined, conditions: undefined}) {
+        this.typeChecker.validateAsObjectAndNotArray("Data", data);
+        this.id = data.id;
+        this.name = data.name;
+        this.conditions = data.conditions;
     }
 
     public toJSON() {
@@ -52,5 +60,21 @@ export class Page implements Identifiable {
             name: this.name,
             conditions: this.conditions,
         }
+    }
+
+    get conditions(): Array<Object> {
+        return this._conditions;
+    }
+
+    set conditions(value: Array<Object>) {
+        this._conditions = value;
+    }
+    get name(): string {
+        return this._name;
+    }
+
+    set name(value: string) {
+        this.typeChecker.validateAsStringOrUndefined("Name", value);
+        this._name = value;
     }
 }

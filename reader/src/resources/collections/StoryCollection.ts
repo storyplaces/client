@@ -1,4 +1,4 @@
-/*!*****************************************************************
+/*******************************************************************
  *
  * StoryPlaces
  *
@@ -18,7 +18,7 @@
  * Redistributions in binary form must reproduce the above copyright
  notice, this list of conditions and the following disclaimer in the
  documentation and/or other materials provided with the distribution.
- * The name of the Universities of Southampton nor the name of its
+ * The name of the University of Southampton nor the name of its
  contributors may be used to endorse or promote products derived from
  this software without specific prior written permission.
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -33,16 +33,26 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Story} from "../models/Story";
 import {BaseCollection} from "./BaseCollection";
+import {Story} from "../models/Story";
+import {inject, Factory} from "aurelia-framework";
 
+@inject(Factory.of(Story))
 export class StoryCollection extends BaseCollection<Story> {
+    constructor(private factory: (any?) => Story, data?: any[]) {
+        super();
 
-    protected fromJSON(item: any): Story {
-        if (item instanceof Story) {
-            return item as Story;
+        if (data && Array.isArray(data)) {
+            this.saveMany(data);
+        }
+    }
+
+    protected itemFromObject(item: any): Story {
+
+        if (item instanceof Story)  {
+            return item;
         }
 
-        return new Story(item);
+        return this.factory(item);
     }
 }

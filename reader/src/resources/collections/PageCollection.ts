@@ -1,4 +1,4 @@
-/*!*****************************************************************
+/*******************************************************************
  *
  * StoryPlaces
  *
@@ -18,7 +18,7 @@
  * Redistributions in binary form must reproduce the above copyright
  notice, this list of conditions and the following disclaimer in the
  documentation and/or other materials provided with the distribution.
- * The name of the Universities of Southampton nor the name of its
+ * The name of the University of Southampton nor the name of its
  contributors may be used to endorse or promote products derived from
  this software without specific prior written permission.
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -35,14 +35,22 @@
 
 import {BaseCollection} from "./BaseCollection";
 import {Page} from "../models/Page";
+import {inject, Factory} from "aurelia-framework";
 
+@inject(Factory.of(Page))
 export class PageCollection extends BaseCollection<Page> {
+    constructor(private factory: (any?) => Page, data?: any[]) {
+        super();
+        if (data && Array.isArray(data)) {
+            this.saveMany(data);
+        }
+    }
 
-    protected fromJSON(item: any): Page {
+    protected itemFromObject(item: any): Page {
         if (item instanceof Page) {
-            return item as Page;
+            return item;
         }
 
-        return new Page(item);
+        return this.factory(item);
     }
 }
